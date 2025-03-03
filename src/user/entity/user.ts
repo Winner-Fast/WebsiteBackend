@@ -25,9 +25,6 @@ export class User {
 
     @Column({ nullable: true })
     otp: string;
-  
-    @Column({ type: 'timestamp', nullable: true })
-    otpExpiresAt: Date;
 
     @Column('json', { nullable: true })
     devices: { deviceId: string; deviceType: string; os: string }[];

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Request, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Request, UseGuards, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dtos/auth/create-register.dto';
 import { SignInDto } from './dtos/auth/create-login.dto';
@@ -10,11 +10,7 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginDto: SignInDto) {
-    try{
       return await this.authService.login(loginDto)
-    }catch(e){
-      throw new BadRequestException("Hola ops smth went wrong")
-    }
   }
 
   // @Post('profile')
