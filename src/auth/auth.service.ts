@@ -23,8 +23,6 @@ export class AuthService {
   //   private entityManager: EntityManager
   // ) {}
 
-
-
   async login(loginDto) {
     try{
       const existingUser = await this.userRepository.findOne({where:{email:loginDto.email}})
@@ -38,9 +36,8 @@ export class AuthService {
       if(existingUser.status == "unverified"){
         throw new ForbiddenException("you have to verify your account first")
       }
-      const token = await tokenGenerator(existingUser, 2)
+      const token = await tokenGenerator(existingUser, 24)
       let userinfo =  plainToClass(ResponseLoginDto,existingUser, { excludeExtraneousValues:true, enableImplicitConversion:true}) 
-
       return {
         userinfo,
         token,
@@ -68,20 +65,25 @@ export class AuthService {
       }
       registerDto.password = hashpassword;
       const user = this.userRepository.create(registerDto);
-      await this.userRepository.save(user);
-      const token = await tokenGenerator(user, 2)
-      let userinfo =  plainToClass(ResponseRegisterDto,existingUser, { excludeExtraneousValues:true, enableImplicitConversion:true}) 
-      return {
-        userinfo,
-        token,
-      };
+      let result = await this.userRepository.save(user);
+      if(result){
+        const token = await tokenGenerator(user, 24)
+        let userinfo =  plainToClass(ResponseRegisterDto,user, { excludeExtraneousValues:true, enableImplicitConversion:true}) 
+        return {
+          userinfo,
+          token,
+        };
+      }else{
+        throw new BadRequestException("please try again smth went wrong")
+      }
+
 
     }catch(e){
       console.log('oppppppppps error ',e)
       if(e instanceof ConflictException){
         throw new ConflictException('Email is already registered.')
       }
-      throw new BadRequestException("Ops smth went wrong")
+      throw new BadRequestException("please try again smth went wrong")
     }
 }
 }

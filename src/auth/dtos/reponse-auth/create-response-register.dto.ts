@@ -13,5 +13,4 @@ export class ResponseRegisterDto{
     role:string
     @Expose()
     verified:string
-
 }
