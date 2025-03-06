@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, BadRequestException, UnauthorizedException, NotFoundException, Put, ForbiddenException } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
@@ -12,19 +12,19 @@ export class ExpensesController {
   @Post()
   @UseGuards(UserRoleGuard)
   async createExpense(@Body() createExpenseDto: CreateExpenseDto, @Req() req) {
-    try {
+    try{
       let token = req.headers['authorization']?.split(" ")[1];
-      if (!token) {
+      if(!token){
         throw new UnauthorizedException("ops kidly try to login again")
       }
-      let infoUser = jwtValidation(token);
-      if (!infoUser) {
+      let infoUser =jwtValidation(token);
+      if(!infoUser){
         throw new UnauthorizedException("ops kidly try to login again")
       }
       await this.expensesService.create(createExpenseDto, infoUser.id)
-    } catch (e) {
+    }catch(e) {
       console.log("ops creating does't work, please try again ", e)
-      if (e instanceof UnauthorizedException) {
+      if(e instanceof UnauthorizedException){
         throw new UnauthorizedException("ops kidly try to login again")
       }
       throw new BadRequestException("ops smth went wrong")
@@ -32,22 +32,23 @@ export class ExpensesController {
   }
 
   @Get()
-  findAll(@Req() req) {
-    try {
+  @UseGuards(UserRoleGuard)
+  findAll(@Req() req){
+    try{
       let token = req.headers['authorization']?.split(" ")[1];
-      if (!token) {
+      if (!token){
         throw new UnauthorizedException("ops kidly try to login again")
       }
-      let infoUser = jwtValidation(token);
-      if (!infoUser) {
+      let infoUser=jwtValidation(token);
+      if(!infoUser){
         throw new UnauthorizedException("ops kidly try to login again")
       }
       return this.expensesService.findAllMyExpenses(infoUser.id);
-    } catch (e) {
-      if (e instanceof UnauthorizedException) {
+    }catch(e){
+      if(e instanceof UnauthorizedException) {
         throw new UnauthorizedException("ops kidly try to login again")
       }
-      if (e instanceof NotFoundException) {
+      if(e instanceof NotFoundException){
         throw new NotFoundException("No expenses yet")
       }
       throw new BadRequestException("ops smth bad happend")
@@ -55,17 +56,50 @@ export class ExpensesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.expensesService.findOneExpense(+id);
+  @UseGuards(UserRoleGuard)
+  async findOne(@Param('id') id: number, @Req() req) {
+    try{
+      const userId = req.user.id;
+      return await this.expensesService.findOneExpense(id, userId);
+    }catch(e){
+      console.log("oooops there's an error", e);
+      if(e instanceof NotFoundException){
+        throw e;
+      }
+      if(e instanceof ForbiddenException){
+        throw e;
+      }
+      throw new BadRequestException("ops smth wrong happened");
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExpenseDto: UpdateExpenseDto) {
-    return this.expensesService.updateExpense(+id, updateExpenseDto);
+  @Put(':id')
+  @UseGuards(UserRoleGuard)
+  update(@Param('id') id: number, @Body() updateExpenseDto: UpdateExpenseDto, @Req() req) {
+    try{
+      const userId = req.user.id;
+      return this.expensesService.updateExpense(id, updateExpenseDto, userId);
+    }catch(e){
+      console.log("there's an error", e);
+      if(e instanceof NotFoundException){
+        throw e;
+      }
+      throw new BadRequestException("ops it failed to update expense");
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.expensesService.removeExpense(+id);
+  @UseGuards(UserRoleGuard)
+  async remove(@Param('id')id: number, @Req() req) {
+    try{
+      const userId = req.user.id;
+      return await this.expensesService.removeExpense(id, userId);
+    }catch(e){
+      console.log("there's an error", e);
+      if(e instanceof NotFoundException){
+        throw e;
+      }
+      throw new BadRequestException("ops smth went wrong");
+    }
   }
 }

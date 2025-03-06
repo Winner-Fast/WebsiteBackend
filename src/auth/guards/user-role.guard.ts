@@ -19,6 +19,7 @@ export class UserRoleGuard implements CanActivate {
             if (infoUser.role !== 'user') {
                 throw new ForbiddenException('Admins cannot perform this action, only business owners can');
             }
+            request.user = infoUser;
             return true; 
         } catch (e) {
             console.log("++++++++++", e);
