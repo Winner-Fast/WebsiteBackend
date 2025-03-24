@@ -7,10 +7,7 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class ExpensesService{
-  constructor(
-    @InjectRepository(Expense)
-    private expenseRepository: Repository<Expense>
-  ) { }
+  constructor(@InjectRepository(Expense) private expenseRepository: Repository<Expense>){}
   async create(createExpenseDto: CreateExpenseDto, userId) {
     try {
       createExpenseDto.userId = userId;
