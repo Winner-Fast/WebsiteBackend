@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {Expense} from '../../expenses/entities/expense.entity';
 @Entity('user')
 export class User {
     @PrimaryGeneratedColumn()
@@ -25,12 +25,12 @@ export class User {
 
     @Column({ nullable: true })
     otp: string;
-  
-    @Column({ type: 'timestamp', nullable: true })
-    otpExpiresAt: Date;
 
     @Column('json', { nullable: true })
     devices: { deviceId: string; deviceType: string; os: string }[];
+
+    @OneToMany(() => Expense, (expense) => expense?.userId)
+    expenses: Expense[];
 
     @CreateDateColumn()
     createdAt: Date;
