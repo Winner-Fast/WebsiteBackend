@@ -1,5 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import {Expense} from '../../expenses/entities/expense.entity';
+import { Product } from 'src/product/entities/product.entity';
+import { Sell } from 'src/sell/entities/sell.entity';
 @Entity('user')
 export class User {
     @PrimaryGeneratedColumn()
@@ -26,11 +28,14 @@ export class User {
     @Column({ nullable: true })
     otp: string;
 
-    @Column('json', { nullable: true })
-    devices: { deviceId: string; deviceType: string; os: string }[];
-
     @OneToMany(() => Expense, (expense) => expense?.userId)
     expenses: Expense[];
+
+    @OneToMany(()=> Product, (product) => product?.userId)
+    products:Product[]
+
+    @OneToMany(()=> Sell, (sell)=>sell?.userId)
+    sells:Sell[]
 
     @CreateDateColumn()
     createdAt: Date;
