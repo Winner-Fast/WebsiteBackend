@@ -96,7 +96,7 @@ export class ProductService {
             if (e instanceof NotFoundException) {
                 throw e;
             }
-            console.log('Dweee', e);
+            // console.log('Dweee', e);
             throw new BadRequestException('Failed to delete product');
         }
     }
