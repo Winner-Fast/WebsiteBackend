@@ -11,21 +11,18 @@ export class UserRoleGuard implements CanActivate {
             const request = context.switchToHttp().getRequest();
             const token = request.headers['authorization']?.split(' ')[1];
             if(!token){
-                throw new UnauthorizedException('Please login to access this resource');
+                throw new UnauthorizedException('kindly try to login again');
             }
             const infoUser = jwtValidation(token);
             // console.log('user Info:', infoUser);
 
             if(infoUser.role !== 'user'){
-                throw new ForbiddenException('Admins cannot perform this action, only business owners can');
+                throw new ForbiddenException('osp only business owners can perform this');
             }
             request.user = infoUser;
             return true; 
         } catch(e){
             console.log("++++++++++", e);
-            if(e instanceof UnauthorizedException){
-                throw new UnauthorizedException("Please login to access this resource");
-            }
             if(e instanceof ForbiddenException){
                 throw new ForbiddenException('Admins cannot perform this action, only business owners can');
             }
