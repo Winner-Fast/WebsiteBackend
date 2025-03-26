@@ -13,6 +13,8 @@ import { SellModule } from './sell/sell.module';
 import { ProductModule } from './product/product.module';
 import { Product } from './product/entities/product.entity';
 import { Sell } from './sell/entities/sell.entity';
+import { SupplierModule } from './supplier/supplier.module';
+import { Supplier } from './supplier/entities/supplier.entity';
 
 
 @Module({
@@ -25,9 +27,9 @@ import { Sell } from './sell/entities/sell.entity';
       username: process.env.POSTGRESQL_USERNAME,
       password: process.env.POSTGRESQL_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User, Expense, Product, Sell],
+      entities: [User, Expense, Product, Sell,Supplier],
       synchronize: true,
-      }), UserModule, AuthModule, OtpModule, ExpensesModule, SellModule, ProductModule,],
+      }), UserModule, AuthModule, OtpModule, ExpensesModule, SellModule, ProductModule, SupplierModule,],
   controllers: [AppController],
   providers: [AppService],
 })
