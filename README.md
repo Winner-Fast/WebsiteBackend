@@ -69,7 +69,12 @@ TOKEN_SECRET
    npm run start:dev
 
 
+
 The backend will be running on http://localhost:3000.
+
+
+
+### Documentation api : https://documenter.getpostman.com/view/42587173/2sAYkLnHGw
 
 Endpoints
 Authentication
