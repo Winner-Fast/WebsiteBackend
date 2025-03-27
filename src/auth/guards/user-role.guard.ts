@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JsonWebTokenError } from '@nestjs/jwt';
-import { jwtValidation } from 'src/utils/jwtValidation';
+import { jwtValidation } from '../../utils/jwtValidation';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {

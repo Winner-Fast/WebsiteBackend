@@ -20,7 +20,7 @@ export class ProductService {
                 throw new BadRequestException("ops smth went wrong")
             }
             console.log(finalResult)
-            return 'the product was added succcessfully'
+            return finalResult
         } catch (e) {
             console.log("++++", e)
             throw new BadRequestException("ops smth went wrong")

@@ -13,6 +13,7 @@ export class ProductController {
     async addNewProduct(@Body() createProductDto: CreateProductDto, @Req() req) {
         try {
             let result = await this.productService.addNewProduct(createProductDto, req.user.id)
+            return result
         } catch (e) {
             console.log("ops there's an error", e)
             throw new BadRequestException("Ops smth went wrong", e)

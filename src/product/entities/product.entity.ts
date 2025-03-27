@@ -1,5 +1,5 @@
-import { Sell } from "src/sell/entities/sell.entity";
-import { User } from "src/user/entity/user";
+import { Sell } from "../../sell/entities/sell.entity";
+import { User } from "../../user/entity/user";
 import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('product')
