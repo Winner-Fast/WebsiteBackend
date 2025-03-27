@@ -14,7 +14,7 @@ export class Supplier {
   @Column({ type: 'text', nullable: true })
   address: string;
 
-  @Column({ type: 'enum', enum: ['satisfied','Not satisfied', 'the best', 'Medium'], default: 'satisfied'})
+  @Column({ type: 'enum', enum: ['satisfied','Not satisfied', 'the best', 'Medium', 'first experience'], default: 'satisfied'})
   qualityService: string;
 
   @Column({ type: 'enum', enum: ['same day','1 day', '2 days', '3 days','4 days', '1 week', 'more than 1 week'], default: 'same day'})
