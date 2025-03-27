@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import {  DataSource, Repository } from 'typeorm'
 import { Sell } from './entities/sell.entity'
 import { CreateSellDto } from './dtos/create-sell.dto'
 import { UpdateSellDto } from './dtos/update-sell.dto'
@@ -9,26 +9,43 @@ import { Product } from 'src/product/entities/product.entity'
 @Injectable()
 export class SellService {
   constructor(@InjectRepository(Sell) private sellRepository: Repository<Sell>,
-              @InjectRepository(Product) private productRepository: Repository<Product>){}
+              @InjectRepository(Product) private productRepository: Repository<Product>,
+              private dataSource: DataSource,
+            ){}
 
   async createNewSell(createSellDto: CreateSellDto, userId: number){
+    const queryRunner = this.dataSource.createQueryRunner();
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       let productCheck = await this.productRepository.findOne({where: {id: createSellDto.productIds}})
       if(! productCheck){
         throw new NotFoundException("ops The Product is not dound")
       }
+      if(productCheck.stock < createSellDto.quantity){
+        throw new BadRequestException("ops this quantity is not available in the stock of product please check again")
+      }
+      productCheck.stock -= createSellDto.quantity;
+      await this.productRepository.save(productCheck);
       const sell = this.sellRepository.create({
         ...createSellDto,
         userId,
         products:[productCheck]
       })
       let result = await this.sellRepository.save(sell)
+      await queryRunner.commitTransaction();
       return result
     } catch (e){
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
       console.log("sell err",e)
       if (e instanceof NotFoundException){
-        throw new NotFoundException("ops the product is not found")
+        throw e
       }
+      if(e instanceof BadRequestException){
+        throw e 
+      }
+
       throw new BadRequestException("ops the sell wasn't added")
     }
   }
@@ -139,6 +156,17 @@ export class SellService {
     } catch (e) {
       if (e instanceof NotFoundException || e instanceof ForbiddenException) throw e
       throw new BadRequestException("ops smth went wrong")
+    }
+  }
+  async statistics(){
+    try {
+      let result = await this.dataSource.query(
+        `SELECT SUM("totalAmount") AS "total_sell_amount" FROM public.sell`
+      );
+      console.log(result);
+      return result;
+    } catch (e) {
+      throw new BadRequestException("Oops, no statistics available.");
     }
   }
 }

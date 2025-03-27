@@ -49,7 +49,7 @@ export class AuthService {
       if(e instanceof ForbiddenException){
         throw new ForbiddenException("you have to verify your account first")
       }
-      throw new BadRequestException("ops try again ")
+      throw new BadRequestException("invalid credentials, please try again")
     }
   }
 

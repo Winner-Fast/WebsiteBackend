@@ -22,7 +22,7 @@ export class User {
     @Column({ type: 'enum', enum: ['admin','user'], default: 'user'})
     role: string;
 
-    @Column({type: 'enum', enum: ['verified', 'unverified'], default: 'unverified'})
+    @Column({type: 'enum', enum: ['verified', 'unverified'], default: 'verified'})
     status: string;
 
     @Column({ nullable: true })

@@ -16,9 +16,8 @@ export class SellController {
       return await this.sellService.createNewSell(createSellDto, userId)
     } catch(e){
       console.log("there's an error", e)
-      if (e instanceof NotFoundException){
-        throw new NotFoundException("ops the product is not found")
-      }
+      if (e instanceof NotFoundException || e instanceof BadRequestException) throw e
+
       throw new BadRequestException("the sell failed")
     }
   }
@@ -74,8 +73,12 @@ export class SellController {
       const userId = req.user.id
       return await this.sellService.remove(id, userId)
     } catch (e) {
-      if (e instanceof NotFoundException || e instanceof ForbiddenException) throw e
+      if (e instanceof NotFoundException || e instanceof ForbiddenException || e instanceof BadRequestException) throw e
       throw new BadRequestException("Ops smth went wrong we could't delete")
     }
+  }
+  @Get('/statistics')
+  async statistics(){
+    return await this.sellService.statistics()
   }
 }
