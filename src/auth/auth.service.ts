@@ -3,10 +3,9 @@ import { User } from '../user/entity/user';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SignupDto } from './dtos/auth/create-register.dto';
-import {hashedpassword } from 'src/utils/hashPassword';
-import tokenGenerator from "src/utils/tokenGenerator"
-import { NotFoundError } from 'rxjs';
-import { CheckPassword } from 'src/utils/checkPassword';
+import {hashedpassword } from '../utils/hashPassword';
+import tokenGenerator from "../utils/tokenGenerator"
+import { CheckPassword } from '../utils/checkPassword';
 import { plainToClass } from 'class-transformer';
 import { ResponseLoginDto } from './dtos/reponse-auth/create-response-login.dto';
 import { ResponseRegisterDto } from './dtos/reponse-auth/create-response-register.dto';
